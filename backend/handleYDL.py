@@ -28,13 +28,19 @@ def get_infos( url, ydl_opts=None, use_cli=False, cli_path=DEFAULT_CLI_PATH ):
     infos = {}
 
     if not use_cli:
-        with YoutubeDL() as ydl:
+        with YoutubeDL(ydl_opts) as ydl:
             extracted_infos = ydl.extract_info( url, download=False )
             infos = { 
-                'title': extracted_infos['title'],
-                'description': extracted_infos['description'],
-                'duration': extracted_infos['duration']
-                }
+                'title': extracted_infos.get('title'),
+                'description': extracted_infos.get('description'),
+                'duration': extracted_infos.get('duration'),
+                'thumbnail': extracted_infos.get('thumbnail'),
+                'thumbnails': extracted_infos.get('thumbnails'),
+                'filesize': extracted_infos.get('filesize'),
+                'filesize_approx': extracted_infos.get('filesize_approx'),
+                'requested_formats': extracted_infos.get('requested_formats'),
+                'format': extracted_infos.get('format')
+            }
     else:
         infos['title'] = subprocess.run( [cli_path, url, '--get-title'], capture_output=True, encoding='UTF-8' )
         infos['description'] = subprocess.run( [cli_path, url, '--get-description'], capture_output=True, encoding='UTF-8' )
