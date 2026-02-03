@@ -14,14 +14,19 @@ If you don't have one, sign up for free at [huggingface.co/join](https://hugging
 6.  **Visibility**: Choose `Public` or `Private` (your preference).
 7.  Click **Create Space**.
 
-## Step 3: Upload Your Files
-You can upload files directly through the web interface (easiest):
+## Step 3: Bundle and Upload Files
+The error you saw earlier happens because the browser can't read hidden system files (like `.git`) or locked folders. I've made a script to fix this!
 
-1.  In your new Space, click on the **Files** tab.
-2.  Click **Add file** > **Upload files**.
-3.  Drag and drop **ALL** the files from your project folder into the browser window.
-    *   *Note: You can skip the `node_modules` and `.next` folders as they are huge and not needed.*
-4.  In the "Commit changes" box, type "Initial deploy" and click **Commit changes to main**.
+1.  **Run the Preparation Script**:
+    *   Open your terminal in the project folder.
+    *   Type: `.\prepare_deploy.ps1` and hit Enter.
+    *   This will create a new folder called **`deploy_package`** with *only* the safe files.
+
+2.  **Upload to Hugging Face**:
+    *   In your Space, click **Files** > **Add file** > **Upload files**.
+    *   Open the `deploy_package` folder on your computer.
+    *   Select **ALL** the files inside it and drag them into the browser.
+    *   Commit changes.
 
 ## Step 4: Watch it Build! 🏗️
 1.  Click on the **App** tab.
