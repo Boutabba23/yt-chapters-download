@@ -34,8 +34,11 @@ export function CommandBuilder() {
 
         if (splitChapters) {
             parts.push("--split-chapters");
-            // Use standard yt-dlp chapter template
-            parts.push('-o "chapter:%(section_number)02d - %(section_title)s.%(ext)s"');
+            // Download chapters into a folder named after the title
+            parts.push('-o "%(title)s/%(section_number)02d - %(section_title)s.%(ext)s"');
+        } else {
+            // Download single file into a folder named after the title
+            parts.push('-o "%(title)s/%(title)s.%(ext)s"');
         }
 
         // 2. Add URL at the end
