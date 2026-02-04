@@ -34,10 +34,12 @@ export function CommandBuilder() {
 
         if (splitChapters) {
             parts.push("--split-chapters");
-            // Download chapters into a folder named after the title
-            parts.push('-o "%(title)s/%(section_number)02d - %(section_title)s.%(ext)s"');
+            // Template for the split segments
+            parts.push('-o "chapter:%(title)s/%(section_number)02d - %(section_title)s.%(ext)s"');
+            // Template for the initial/main download
+            parts.push('-o "%(title)s/%(title)s.%(ext)s"');
         } else {
-            // Download single file into a folder named after the title
+            // Download single file into its own folder
             parts.push('-o "%(title)s/%(title)s.%(ext)s"');
         }
 
