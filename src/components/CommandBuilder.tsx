@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ScriptDownload } from "./ScriptDownload";
+import { ScriptDownload } from "@/components/ScriptDownload";
 
 export function CommandBuilder() {
     const [url, setUrl] = useState("");
