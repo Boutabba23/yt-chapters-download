@@ -9,7 +9,7 @@ if (Test-Path $destination) {
 }
 New-Item -ItemType Directory -Path $destination | Out-Null
 
-Write-Host "📦 Preparing files for deployment..." -ForegroundColor Cyan
+Write-Host "[INFO] Preparing files for deployment..." -ForegroundColor Cyan
 
 # List of files/folders to copy
 $items = @(
@@ -31,10 +31,11 @@ foreach ($item in $items) {
     if (Test-Path "$source\$item") {
         Copy-Item -Path "$source\$item" -Destination "$destination\$item" -Recurse
         Write-Host "  + Copied $item" -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "  ! Warning: $item not found" -ForegroundColor Yellow
     }
 }
 
-Write-Host "`n✅ Ready! Folder created at: $destination" -ForegroundColor Cyan
-Write-Host "👉 Drag the CONTENTS of the 'deploy_package' folder to Hugging Face." -ForegroundColor White
+Write-Host "`n[DONE] Ready! Folder created at: $destination" -ForegroundColor Cyan
+Write-Host "-> Drag the CONTENTS of the 'deploy_package' folder to Hugging Face." -ForegroundColor White
