@@ -7,6 +7,13 @@ DEFAULT_CLI_PATH = "yt-dlp"
 
 def download( url, ydl_opts=None, use_cli=False, cli_path=DEFAULT_CLI_PATH ):
     
+    if ydl_opts is None: ydl_opts = {}
+    # Aggressive DNS/Networking fixes
+    ydl_opts.setdefault('force_ipv4', True)
+    ydl_opts.setdefault('nocheckcertificate', True)
+    ydl_opts.setdefault('socket_timeout', 30)
+    ydl_opts.setdefault('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+    
     if not use_cli:
         with YoutubeDL( ydl_opts ) as ydl:
             ydl.prepare_filename( ydl.extract_info( url ) )
@@ -26,6 +33,13 @@ def download( url, ydl_opts=None, use_cli=False, cli_path=DEFAULT_CLI_PATH ):
 def get_infos( url, ydl_opts=None, use_cli=False, cli_path=DEFAULT_CLI_PATH ):
     
     infos = {}
+
+    if ydl_opts is None: ydl_opts = {}
+    # Aggressive DNS/Networking fixes
+    ydl_opts.setdefault('force_ipv4', True)
+    ydl_opts.setdefault('nocheckcertificate', True)
+    ydl_opts.setdefault('socket_timeout', 30)
+    ydl_opts.setdefault('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 
     if not use_cli:
         with YoutubeDL(ydl_opts) as ydl:
@@ -51,6 +65,13 @@ def get_infos( url, ydl_opts=None, use_cli=False, cli_path=DEFAULT_CLI_PATH ):
 def prepare_filename( url, ydl_opts=None, use_cli=False, cli_path=DEFAULT_CLI_PATH ):
     
     infos = get_infos( url, use_cli, cli_path )
+
+    if ydl_opts is None: ydl_opts = {}
+    # Aggressive DNS/Networking fixes
+    ydl_opts.setdefault('force_ipv4', True)
+    ydl_opts.setdefault('nocheckcertificate', True)
+    ydl_opts.setdefault('socket_timeout', 30)
+    ydl_opts.setdefault('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
 
     if not use_cli:
         with YoutubeDL( ydl_opts ) as ydl:

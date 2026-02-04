@@ -18,6 +18,7 @@ import sys
 import json
 import os
 import io
+import socket
 
 # Redirect stdout temporarily to capture everything else
 old_stdout = sys.stdout
@@ -28,8 +29,21 @@ from handleYDL import get_infos
 import engine
 
 try:
+    # Debug: Check System DNS first
+    try:
+        ip = socket.gethostbyname('youtube.com')
+        print(f"DEBUG: DNS OK (youtube.com -> {ip})", file=sys.stderr)
+    except Exception as e:
+        print(f"DEBUG: System DNS FAILED: {str(e)}", file=sys.stderr)
+
     # Use quality if provided to get more accurate filesize
-    opts = {'quiet': True}
+    opts = {
+        'quiet': True, 
+        'force_ipv4': True,
+        'nocheckcertificate': True,
+        'socket_timeout': 30,
+        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
     if "${quality || ""}" != "":
         opts['format'] = "${quality || ""}"
         

@@ -33,10 +33,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3-pip \
     ffmpeg \
     ca-certificates \
+    netbase \
+    dnsutils \
     && rm -rf /var/lib/apt/lists/*
 
 # Install yt-dlp
-RUN pip3 install yt-dlp
+RUN pip3 install --break-system-packages yt-dlp certifi
 
 # The 'node' user already exists with UID 1000
 # We use it to ensure compatibility with Hugging Face Spaces
