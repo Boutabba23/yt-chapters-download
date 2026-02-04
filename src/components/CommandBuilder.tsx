@@ -33,11 +33,10 @@ export function CommandBuilder() {
         }
 
         if (splitChapters) {
-            parts.push("--split-chapters");
-            // Template for the split segments
+            // Precision splitting flags
+            parts.push("--split-chapters", "--embed-chapters", "--force-keyframes-at-cuts");
+            // Template for the split segments (chapter: prefix is key)
             parts.push('-o "chapter:%(title)s/%(section_number)02d - %(section_title)s.%(ext)s"');
-            // Template for the initial/main download
-            parts.push('-o "%(title)s/%(title)s.%(ext)s"');
         } else {
             // Download single file into its own folder
             parts.push('-o "%(title)s/%(title)s.%(ext)s"');
