@@ -6,31 +6,43 @@ import { ScriptDownload } from "@/components/ScriptDownload";
 export function CommandBuilder() {
     const [url, setUrl] = useState("");
     const [isAudioOnly, setIsAudioOnly] = useState(false);
+    const [quality, setQuality] = useState("1080");
     const [splitChapters, setSplitChapters] = useState(false);
     const [addMetadata, setAddMetadata] = useState(true);
     const [command, setCommand] = useState("");
 
     useEffect(() => {
-        let cmd = `yt-dlp "${url || "URL_HERE"}"`;
+        const parts = ["yt-dlp"];
 
-        // Audio Only Logic
+        // 1. Add Options
         if (isAudioOnly) {
-            cmd = `yt-dlp -x --audio-format mp3`;
-            if (addMetadata) cmd += ` --add-metadata --embed-thumbnail`;
-            if (splitChapters) cmd += ` --split-chapters -o "chapter: %(section_number)s - %(section_title)s.%(ext)s"`;
-            cmd += ` "${url || "URL_HERE"}"`;
+            parts.push("-x", "--audio-format mp3");
         } else {
-            // Video Logic
-            if (addMetadata) cmd = `yt-dlp --add-metadata --embed-thumbnail`;
-            else cmd = `yt-dlp`;
-
-            if (splitChapters) cmd += ` --split-chapters -o "chapter: %(section_number)s - %(section_title)s.%(ext)s"`;
-
-            cmd += ` "${url || "URL_HERE"}"`;
+            // Quality selection
+            const formatStr = {
+                "1080": "bestvideo[height<=1080]+bestaudio/best[height<=1080]",
+                "720": "bestvideo[height<=720]+bestaudio/best[height<=720]",
+                "480": "bestvideo[height<=480]+bestaudio/best[height<=480]"
+            }[quality] || "best";
+            parts.push(`-f "${formatStr}"`);
+            parts.push("--merge-output-format mp4");
         }
 
-        setCommand(cmd);
-    }, [url, isAudioOnly, splitChapters, addMetadata]);
+        if (addMetadata) {
+            parts.push("--add-metadata", "--embed-thumbnail");
+        }
+
+        if (splitChapters) {
+            parts.push("--split-chapters");
+            // Use standard yt-dlp chapter template
+            parts.push('-o "chapter:%(section_number)02d - %(section_title)s.%(ext)s"');
+        }
+
+        // 2. Add URL at the end
+        parts.push(`"${url || "URL_HERE"}"`);
+
+        setCommand(parts.join(" "));
+    }, [url, isAudioOnly, quality, splitChapters, addMetadata]);
 
     return (
         <div className="w-full max-w-2xl mx-auto space-y-6">
@@ -58,6 +70,22 @@ export function CommandBuilder() {
                         </div>
                         <span className="font-medium">Audio Only (MP3)</span>
                     </div>
+
+                    {/* Quality Selector (Only shows for Video) */}
+                    {!isAudioOnly && (
+                        <div className="flex flex-col space-y-1">
+                            <label className="text-xs font-semibold opacity-60 ml-1">Max Resolution</label>
+                            <select
+                                value={quality}
+                                onChange={(e) => setQuality(e.target.value)}
+                                className="w-full p-[9px] bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
+                            >
+                                <option value="1080">1080p (Full HD)</option>
+                                <option value="720">720p (HD)</option>
+                                <option value="480">480p (SD)</option>
+                            </select>
+                        </div>
+                    )}
 
                     {/* Split Chapters */}
                     <div className="flex items-center space-x-3 p-3 border border-border rounded-lg hover:bg-white/5 transition-colors cursor-pointer" onClick={() => setSplitChapters(!splitChapters)}>
