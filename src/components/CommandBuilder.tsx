@@ -37,12 +37,16 @@ export function CommandBuilder() {
         }
 
         if (splitChapters) {
-            // Precision splitting flags
+            // Precision flags + Codec hints to prevent "Conversion failed"
             parts.push("--split-chapters", "--embed-chapters", "--force-keyframes-at-cuts");
-            // Template for split segments
-            parts.push(`-o "${cleanTitle}/%(section_number)02d - %(section_title)s.%(ext)s"`);
+            parts.push('--postprocessor-args "ffmpeg:-c:v libx264 -preset superfast -c:a aac"');
+
+            // Template for fragments (chapter: prefix ensures they go into the folder)
+            parts.push(`-o "chapter:${cleanTitle}/%(section_number)02d - %(section_title)s.%(ext)s"`);
+            // Fallback/Main template
+            parts.push(`-o "${cleanTitle}/%(title)s.%(ext)s"`);
         } else {
-            // Download single file into folder
+            // Standard single-file template
             parts.push(`-o "${cleanTitle}/%(title)s.%(ext)s"`);
         }
 
