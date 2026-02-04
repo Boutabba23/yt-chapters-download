@@ -5,11 +5,15 @@ import { ScriptDownload } from "@/components/ScriptDownload";
 
 export function CommandBuilder() {
     const [url, setUrl] = useState("");
+    const [title, setTitle] = useState("download");
     const [isAudioOnly, setIsAudioOnly] = useState(false);
     const [quality, setQuality] = useState("1080");
     const [splitChapters, setSplitChapters] = useState(false);
     const [addMetadata, setAddMetadata] = useState(true);
     const [command, setCommand] = useState("");
+
+    // Clean filename/folder title (removes problematic characters)
+    const cleanTitle = title.replace(/[\\/*?:"<>|]/g, "").trim() || "download";
 
     useEffect(() => {
         const parts = ["yt-dlp"];
@@ -35,34 +39,46 @@ export function CommandBuilder() {
         if (splitChapters) {
             // Precision splitting flags
             parts.push("--split-chapters", "--embed-chapters", "--force-keyframes-at-cuts");
-            // Template for the split segments (chapter: prefix is key)
-            parts.push('-o "chapter:%(title)s/%(section_number)02d - %(section_title)s.%(ext)s"');
+            // Template for split segments
+            parts.push(`-o "${cleanTitle}/%(section_number)02d - %(section_title)s.%(ext)s"`);
         } else {
-            // Download single file into its own folder
-            parts.push('-o "%(title)s/%(title)s.%(ext)s"');
+            // Download single file into folder
+            parts.push(`-o "${cleanTitle}/%(title)s.%(ext)s"`);
         }
 
         // 2. Add URL at the end
         parts.push(`"${url || "URL_HERE"}"`);
 
         setCommand(parts.join(" "));
-    }, [url, isAudioOnly, quality, splitChapters, addMetadata]);
+    }, [url, title, cleanTitle, isAudioOnly, quality, splitChapters, addMetadata]);
 
     return (
         <div className="w-full max-w-2xl mx-auto space-y-6">
             <div className="space-y-4 p-6 bg-card border border-border rounded-xl shadow-sm">
                 <h2 className="text-xl font-semibold mb-4">1. Configure Download</h2>
 
-                {/* URL Input */}
-                <div className="space-y-2">
-                    <label className="text-sm font-medium opacity-80">YouTube URL</label>
-                    <input
-                        type="text"
-                        placeholder="https://youtu.be/..."
-                        value={url}
-                        onChange={(e) => setUrl(e.target.value)}
-                        className="w-full p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all"
-                    />
+                {/* Simple Auto-Title logic could go here, but for now we let user input */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium opacity-80">Video Title (for folder & script name)</label>
+                        <input
+                            type="text"
+                            placeholder="My Video"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            className="w-full p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium opacity-80">YouTube URL</label>
+                        <input
+                            type="text"
+                            placeholder="https://youtu.be/..."
+                            value={url}
+                            onChange={(e) => setUrl(e.target.value)}
+                            className="w-full p-3 bg-background border border-border rounded-lg focus:ring-2 focus:ring-primary focus:outline-none transition-all"
+                        />
+                    </div>
                 </div>
 
                 {/* Options Grid */}
@@ -120,7 +136,7 @@ export function CommandBuilder() {
                     </button>
                 </div>
 
-                <ScriptDownload command={command} filename="download_video" />
+                <ScriptDownload command={command} filename={cleanTitle} />
             </div>
         </div>
     );
